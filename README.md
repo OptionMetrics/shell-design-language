@@ -2,6 +2,8 @@
 
 **A vocabulary for the structural architecture of web applications.**
 
+**Visual Reference:** https://optionmetrics.github.io/shell-design-language/
+
 ---
 
 When building web applications, the industry has well-established languages for two layers of design: component design has atomic design, and visual design has design tokens and design systems. But there has been no equivalent formal language for the **application shell** — the structural layer that defines how regions relate to each other, how layout changes in response to interaction, and how the chrome of an application is organised.
