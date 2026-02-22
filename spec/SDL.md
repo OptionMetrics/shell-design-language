@@ -342,7 +342,38 @@ The activity bar (a narrow leading Anchor) contains tool selectors. Selecting a 
 
 **Example SDL description — Figma:**
 
-> *Canvas pattern. Leading Anchor: activity bar, fixed 48px, drives Viewport tool state. Leading Panel Group, policy: Exclusive, resizable width. Contains: Layers Panel (bidirectional controller — drives and is driven by Viewport selection), Assets Panel (user-initiated). Top Anchor: toolbar, fixed height. Contains: zoom control (bidirectional controller). Main Viewport: Spatial mode, frame-based object model, multi + hierarchical selection model, pan + zoom + fit-to-screen + zoom-to-selection navigation. Viewport Fixture: Minimap, bottom-right corner, user-toggleable. Trailing Panel Group, policy: Exclusive, fixed width 240px. Contains: Design Panel (driven by Viewport selection), Prototype Panel (driven by Viewport selection), Inspect Panel (driven by Viewport selection). Bidirectional controller relationships: Layers Panel ↔ Viewport selection; zoom control ↔ Viewport camera state. Chrome corner ownership: Top Anchor owns full width.*
+```
+Canvas pattern.
+Chrome Anchor Span: Top Anchor full-span, all other Anchors inset.
+
+Leading Anchor: activity bar, fixed 48px, drives Viewport tool state → only.
+
+Leading Panel Group: policy: Exclusive, resizable width.
+  Layers Panel — bidirectional controller
+                 drives and is driven by Viewport selection
+  Assets Panel — user-initiated
+
+Top Anchor: toolbar, fixed height.
+  zoom control — bidirectional controller
+                 drives and reflects Viewport camera state
+
+Main Viewport: Spatial mode.
+  Object model:    frame-based
+  Selection model: multi + hierarchical
+  Navigation:      pan, zoom, fit-to-screen, zoom-to-selection
+  Viewport Fixture: Minimap, bottom-right corner, user-toggleable
+
+Trailing Panel Group: policy: Exclusive, fixed width 240px.
+  Design Panel    — driven by Viewport selection only
+  Prototype Panel — driven by Viewport selection only
+  Inspect Panel   — driven by Viewport selection only
+
+Bidirectional controllers:
+  Layers Panel ↔ Viewport selection
+  zoom control ↔ Viewport camera state
+
+Chrome corner ownership: Top Anchor owns full width.
+```
 
 ### Dashboard
 
@@ -398,7 +429,28 @@ Start with the named composition, then describe each region in order (top Anchor
 
 ### Example: Claude Desktop
 
-> *Workspace pattern with Controller. Chrome Anchor Span: Top Anchor full-span, Leading Anchor inset. Top Anchor: header, fixed height, full-span. Contains: sidebar toggle button (Anchor-to-Anchor controller of Leading Anchor collapse state, reflects collapse state visually), tab bar (Controller of main Viewport). Leading Anchor: sidebar, collapsible, inset (starts below header), breakpoint response: Lift. Anchor Header: workspace switcher. Anchor Body: conversation list, owned scroll. Anchor Footer: User Profile trigger (Anchored Overlay, preferred direction Up), Invite action (Modal Overlay). Main Viewport: Staged mode, three stages (Chat, Cowork, Code), owned vertical scroll per stage. Trailing Panel: content-initiated trigger (artifact content type), fixed width, compresses main Viewport on Inject, user-dismissible.*
+```
+Workspace pattern with Controller.
+Chrome Anchor Span: Top Anchor full-span, Leading Anchor inset.
+
+Top Anchor: header, fixed height, full-span.
+  sidebar toggle — Anchor-to-Anchor controller of Leading Anchor
+                   collapse state, reflects collapse state visually
+  tab bar        — Controller of main Viewport
+
+Leading Anchor: sidebar, collapsible, inset, breakpoint response: Lift.
+  Anchor Header: workspace switcher
+  Anchor Body:   conversation list, owned scroll
+  Anchor Footer: User Profile trigger (Anchored Overlay, preferred direction Up)
+                 Invite action (Modal Overlay)
+
+Main Viewport: Staged mode, three stages (Chat, Cowork, Code),
+               owned vertical scroll per stage.
+
+Trailing Panel: content-initiated trigger (artifact content type),
+                fixed width, compresses main Viewport on Inject,
+                user-dismissible.
+```
 
 This description conveys:
 - The overall pattern
@@ -510,15 +562,44 @@ These calculations must be maintained in application state, because they inform 
 
 ### Example: VS Code
 
-> *Canvas pattern. Leading Anchor: activity bar, fixed 48px. Leading Panel Group, policy: Exclusive, resizable width. Contains: Explorer, Search, Source Control, Extensions (all user-initiated via activity bar). Top Anchor: tab bar, fixed height. Main Viewport: Staged mode (open editor tabs), owned scroll. Bottom Panel Group, policy: Tabbed, resizable height. Contains: Terminal (user-initiated), Output (state-initiated), Problems (state-initiated). Chrome corner ownership: Bottom Panel Group owns full width.*
+```
+Canvas pattern (adapted — main Viewport is Staged, not Spatial).
+Chrome Anchor Span: Top Anchor full-span, all other Anchors inset.
+
+Leading Anchor: activity bar, fixed 48px.
+  tool selectors — Anchor-to-Panel-Group controller of Leading Panel Group
+
+Leading Panel Group: policy: Exclusive, resizable width.
+  Explorer       — user-initiated via activity bar
+  Search         — user-initiated via activity bar
+  Source Control — user-initiated via activity bar
+  Extensions     — user-initiated via activity bar
+
+Top Anchor: tab bar, fixed height.
+
+Main Viewport: Staged mode (open editor tabs), owned scroll per tab.
+
+Bottom Panel Group: policy: Tabbed, resizable height.
+  Terminal — user-initiated
+  Output   — state-initiated
+  Problems — state-initiated
+
+Chrome corner ownership: Bottom Panel Group owns full width.
+```
 
 ### Writing Panel Groups in an SDL Description
 
-> *Trailing Panel Group, policy: Additive, minimum Viewport width: 400px. Contains: Artifact Panel (content-initiated, fixed 380px) and References Panel (user-initiated, fixed 280px).*
+```
+Trailing Panel Group: policy: Additive, minimum Viewport width: 400px.
+  Artifact Panel   — content-initiated, fixed 380px
+  References Panel — user-initiated,    fixed 280px
 
-> *Bottom Panel Group, policy: Exclusive. Contains: Terminal Panel (user-initiated, resizable 200–400px) and Output Panel (state-initiated, fixed 240px).*
+Bottom Panel Group: policy: Exclusive.
+  Terminal Panel — user-initiated,  resizable 200–400px
+  Output Panel   — state-initiated, fixed 240px
 
-> *Chrome corner ownership: Bottom Panel Group owns full width.*
+Chrome corner ownership: Bottom Panel Group owns full width.
+```
 
 ---
 
