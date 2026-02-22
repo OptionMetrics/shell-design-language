@@ -2,8 +2,6 @@
 
 **A vocabulary for the structural architecture of web applications.**
 
-**Visual Reference:** https://optionmetrics.github.io/shell-design-language/
-
 ---
 
 When building web applications, the industry has well-established languages for two layers of design: component design has atomic design, and visual design has design tokens and design systems. But there has been no equivalent formal language for the **application shell** — the structural layer that defines how regions relate to each other, how layout changes in response to interaction, and how the chrome of an application is organised.
@@ -31,7 +29,28 @@ SDL is framework-agnostic, tool-agnostic, and technology-agnostic.
 
 Here is a complete SDL description of Claude Desktop:
 
-> *Workspace pattern with Controller. Chrome Anchor Span: Top Anchor full-span, Leading Anchor inset. Top Anchor: header, fixed height, full-span. Contains: sidebar toggle button (Anchor-to-Anchor controller of Leading Anchor collapse state, reflects collapse state visually), tab bar (Controller of main Viewport). Leading Anchor: sidebar, collapsible, inset, breakpoint response: Lift. Anchor Header: workspace switcher. Anchor Body: conversation list, owned scroll. Anchor Footer: User Profile trigger (Anchored Overlay, preferred direction Up), Invite action (Modal Overlay). Main Viewport: Staged mode, three stages (Chat, Cowork, Code), owned vertical scroll per stage. Trailing Panel: content-initiated trigger (artifact content type), fixed width, compresses main Viewport on Inject, user-dismissible.*
+```
+Workspace pattern with Controller.
+Chrome Anchor Span: Top Anchor full-span, Leading Anchor inset.
+
+Top Anchor: header, fixed height, full-span.
+  sidebar toggle — Anchor-to-Anchor controller of Leading Anchor
+                   collapse state, reflects collapse state visually
+  tab bar        — Controller of main Viewport
+
+Leading Anchor: sidebar, collapsible, inset, breakpoint response: Lift.
+  Anchor Header: workspace switcher
+  Anchor Body:   conversation list, owned scroll
+  Anchor Footer: User Profile trigger (Anchored Overlay, preferred direction Up)
+                 Invite action (Modal Overlay)
+
+Main Viewport: Staged mode, three stages (Chat, Cowork, Code),
+               owned vertical scroll per stage.
+
+Trailing Panel: content-initiated trigger (artifact content type),
+                fixed width, compresses main Viewport on Inject,
+                user-dismissible.
+```
 
 A developer reading this has a clear architectural picture before writing a line of code. A designer can verify it matches their intent. A product manager can understand the structural implications of adding or removing a region.
 
@@ -92,8 +111,8 @@ Shell Design Language is published under [Creative Commons CC BY 4.0](LICENSE). 
 
 ```
 Shell Design Language (SDL), Draft 1.2
-Developed by David Hait, with Claude (Anthropic), February 2026
-https://github.com/OptionMetrics/shell-design-language
+Developed by [Your Name], with Claude (Anthropic), February 2026
+https://github.com/[username]/shell-design-language
 ```
 
 ---
