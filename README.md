@@ -10,6 +10,8 @@ SDL fills that gap. It gives designers, developers, and product teams a shared v
 
 SDL is framework-agnostic, tool-agnostic, and technology-agnostic.
 
+**Visual Reference:** https://optionmetrics.github.io/shell-design-language/
+
 ---
 
 ## What SDL covers
@@ -103,7 +105,7 @@ SDL is an evolving standard. See [CHANGELOG.md](CHANGELOG.md) for the full versi
 
 ---
 
-## Licence
+## License
 
 Shell Design Language is published under [Creative Commons CC BY 4.0](LICENSE). You are free to use, share, adapt, and build on SDL — including commercially — as long as you credit the source.
 
