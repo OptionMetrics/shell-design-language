@@ -1,16 +1,514 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>SDL Visual Reference</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 80px auto; }
-    a { display: block; margin: 16px 0; font-size: 18px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell Design Language</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: #dedad4;
+    --border-bright: #c8c4bc;
+    --text: #1a1816;
+    --text-dim: #9a9690;
+    --text-mid: #5a5650;
+    --accent: #8a6a2e;
+    --accent2: #2e6878;
+    --accent3: #8a3e3e;
+    --accent4: #3e7a3e;
+    --accent5: #5a3e78;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Layout ── */
+
+  .page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+    flex: 1;
+  }
+
+  /* ── Header ── */
+
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 56px;
+    margin-bottom: 72px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--text-mid);
+  }
+
+  .tagline {
+    font-size: 19px;
+    font-weight: 300;
+    color: var(--text-mid);
+    font-style: italic;
+    max-width: 560px;
+    line-height: 1.5;
+    margin-bottom: 36px;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .version-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px 10px;
+  }
+
+  .github-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-mid);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-bright);
+    padding-bottom: 1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .github-link:hover {
+    color: var(--text);
+    border-color: var(--text-mid);
+  }
+
+  /* ── What is SDL ── */
+
+  .intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 80px;
+    align-items: start;
+  }
+
+  .intro-text p {
+    font-size: 16px;
+    color: var(--text-mid);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .intro-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .intro-text strong {
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* ── SDL example block ── */
+
+  .example-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+  }
+
+  .example-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .sdl-description {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.85;
+    color: var(--text-mid);
+  }
+
+  .sdl-description .kw {
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  .sdl-description .val {
+    color: var(--accent);
+  }
+
+  .example-caption {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-top: 14px;
+  }
+
+  /* ── Section header ── */
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 32px;
+  }
+
+  /* ── Reference cards ── */
+
+  .reference-section {
+    margin-bottom: 72px;
+  }
+
+  .reference-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .reference-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .reference-card:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  .card-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .card-eyebrow.dark  { color: var(--text-dim); }
+  .card-eyebrow.light { color: var(--accent4); }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent2);
+    margin-top: 8px;
+  }
+
+  /* ── Concept grid ── */
+
+  .concepts-section {
+    margin-bottom: 72px;
+  }
+
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .concept-cell {
+    background: var(--surface);
+    padding: 24px;
+  }
+
+  .concept-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .concept-desc {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  /* ── Links section ── */
+
+  .links-section {
+    margin-bottom: 0;
+  }
+
+  .links-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .link-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-mid);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .link-pill:hover {
+    border-color: var(--border-bright);
+    color: var(--text);
+  }
+
+  /* ── Footer ── */
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .footer-text a {
+    color: var(--text-dim);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footer-text a:hover {
+    color: var(--text-mid);
+  }
+
+  /* ── Responsive ── */
+
+  @media (max-width: 720px) {
+    .page { padding: 48px 24px 80px; }
+    .intro { grid-template-columns: 1fr; gap: 32px; }
+    .reference-grid { grid-template-columns: 1fr; }
+    .concepts-grid { grid-template-columns: 1fr 1fr; }
+    footer { padding: 24px; flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .concepts-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-  <h1>Shell Design Language — Visual Reference</h1>
-  <a href="reference-dark.html">Dark theme</a>
-  <a href="reference-light.html">Light theme</a>
-  <a href="https://github.com/OptionMetrics/shell-design-language">Back to repository</a>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="eyebrow">A design language for application shells</div>
+    <h1>Shell Design<br><em>Language</em></h1>
+    <p class="tagline">A shared vocabulary for the structural layer of web applications — the layer above components and below visual design.</p>
+    <div class="header-meta">
+      <span class="version-badge">Draft 1.2</span>
+      <a class="github-link" href="https://github.com/[username]/shell-design-language">github.com/[username]/shell-design-language →</a>
+    </div>
+  </header>
+
+  <!-- What is SDL -->
+  <div class="intro">
+    <div class="intro-text">
+      <p>When designing a web application, you quickly find yourself needing to talk about structural decisions that existing vocabularies don't cover cleanly. Is the sidebar a component? Is the header? What happens to the layout when a panel opens? How does the sidebar relate to the header at the corners?</p>
+      <p>SDL is a formal language for answering these questions precisely. It defines <strong>region types</strong> (what exists), <strong>region behaviours</strong> (how each region acts), <strong>anchor zones</strong> (internal structure within regions), and <strong>named compositions</strong> (common patterns built from regions).</p>
+      <p>An SDL description gives designers, developers, and product teams a shared reference that is precise enough to implement from, without specifying visual design or technology.</p>
+    </div>
+
+    <div>
+      <div class="example-block">
+        <div class="example-label">SDL description · Claude Desktop</div>
+        <div class="sdl-description">
+          <span class="kw">Workspace</span> + <span class="kw">Controller</span>.<br>
+          Chrome Span: Top <span class="val">full-span</span>, Leading <span class="val">inset</span>.<br><br>
+          <span class="kw">Top Anchor</span>: header, <span class="val">fixed</span>, full-span.<br>
+          &nbsp;&nbsp;Sidebar toggle → <span class="kw">A→A controller</span><br>
+          &nbsp;&nbsp;Tab bar → <span class="kw">Viewport controller</span><br><br>
+          <span class="kw">Leading Anchor</span>: sidebar, <span class="val">collapsible</span>,<br>
+          &nbsp;&nbsp;breakpoint: <span class="val">Lift</span>.<br>
+          &nbsp;&nbsp;<span class="kw">Header</span> · <span class="kw">Body</span> (owned scroll) · <span class="kw">Footer</span><br><br>
+          <span class="kw">Main Viewport</span>: <span class="val">Staged</span>, 3 stages.<br><br>
+          <span class="kw">Trailing Panel</span>: <span class="val">content-initiated</span>,<br>
+          &nbsp;&nbsp;compresses Viewport on <span class="val">Inject</span>.
+        </div>
+        <div class="example-caption">A complete structural description in under 15 lines.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Reference -->
+  <div class="reference-section">
+    <div class="section-label">Visual Reference</div>
+    <h2>Diagrams for every concept</h2>
+
+    <div class="reference-grid">
+      <a class="reference-card" href="reference-dark.html">
+        <div class="card-eyebrow dark">Dark theme</div>
+        <div class="card-title">SDL Visual Reference</div>
+        <div class="card-desc">19 annotated diagrams covering every region type, behaviour, named composition, and transition. Includes worked examples for Claude Desktop, Figma, and VS Code.</div>
+        <div class="card-cta">Open reference →</div>
+      </a>
+      <a class="reference-card" href="reference-light.html">
+        <div class="card-eyebrow light">Light theme</div>
+        <div class="card-title">SDL Visual Reference</div>
+        <div class="card-desc">The same reference in a light theme suitable for printing, sharing in documents, or reading in bright environments.</div>
+        <div class="card-cta">Open reference →</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Key concepts -->
+  <div class="concepts-section">
+    <div class="section-label">Key concepts</div>
+    <h2>What SDL covers</h2>
+
+    <div class="concepts-grid">
+      <div class="concept-cell">
+        <div class="concept-name">Region Types</div>
+        <div class="concept-desc">Chrome, Anchor, Viewport, Panel, Modal Overlay, Anchored Overlay — the five structural elements every shell is built from.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Anchor Span</div>
+        <div class="concept-desc">Whether an Anchor is full-span or inset relative to perpendicular Anchors. Determines the root CSS Grid structure of the Chrome.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Viewport Modes</div>
+        <div class="concept-desc">Linear, Staged, Routed, and Spatial — four fundamentally different ways a Viewport can be navigated.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Controller Relationships</div>
+        <div class="concept-desc">How Anchors drive Viewports, how Anchors drive other Anchors (the sidebar toggle pattern), and bidirectional relationships in Canvas applications.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Panel Groups</div>
+        <div class="concept-desc">Exclusive, Additive, and Tabbed Panel Policies for shells with multiple simultaneous Panels. Corner Ownership resolves perpendicular Panel Groups.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Spatial Viewports</div>
+        <div class="concept-desc">Navigation models, object models, selection models, and the Minimap Viewport Fixture for Canvas applications like Figma and Miro.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Anchor Zones</div>
+        <div class="concept-desc">The Header, Body, and Footer zones within an Anchor — each with different persistence and scroll behaviour.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Named Compositions</div>
+        <div class="concept-desc">Workspace, Master-Detail, Canvas, Dashboard, Staged, and Command — six structural patterns that cover the majority of web applications.</div>
+      </div>
+      <div class="concept-cell">
+        <div class="concept-name">Transitions</div>
+        <div class="concept-desc">Collapse, Lift, Swap, Split, Merge, Inject, Eject, Lift Overlay, Dismiss Overlay — the vocabulary for how shells change over time.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div class="links-section">
+    <div class="section-label">Repository</div>
+    <h2>Specification and contributing</h2>
+    <div class="links-row">
+      <a class="link-pill" href="https://github.com/[username]/shell-design-language/blob/main/spec/SDL.md">Read the specification</a>
+      <a class="link-pill" href="https://github.com/[username]/shell-design-language/tree/main/examples">Browse examples</a>
+      <a class="link-pill" href="https://github.com/[username]/shell-design-language/blob/main/contributing/CONTRIBUTING.md">Contributing guide</a>
+      <a class="link-pill" href="https://github.com/[username]/shell-design-language/blob/main/CHANGELOG.md">Changelog</a>
+      <a class="link-pill" href="https://github.com/[username]/shell-design-language/issues/new">Propose a concept</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-text">Shell Design Language · Draft 1.2 · February 2026</span>
+  <span class="footer-text">Developed by <a href="https://github.com/[username]">[Your Name]</a> with Claude (Anthropic)</span>
+</footer>
+
 </body>
 </html>
